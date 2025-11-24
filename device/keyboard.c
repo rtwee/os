@@ -3,6 +3,9 @@
 #include "../kernel/interrupt.h"
 #include "../kernel/io.h"
 #include "../kernel/global.h"
+#include "ioqueue.h"
+
+struct ioqueue ioqueue; // 环形队列
 
 #define KBD_BUF_PORT 0x60
 
@@ -172,7 +175,11 @@ static void intr_keyboard_handler(void)
 
         if(cur_char)
         {
-            put_char(cur_char);
+            // put_char(cur_char);
+            if(!ioq_full(&ioqueue))
+            {
+                ioq_putchar(&ioqueue,cur_char);
+            }
             return;
         }
 
@@ -195,6 +202,7 @@ static void intr_keyboard_handler(void)
 void keyboard_init()
 {
     put_str("keyboard init start\n");
+    ioqueue_init(&ioqueue);
     register_handler(0x21,intr_keyboard_handler);
     put_str("keyboard init done\n");
 }
