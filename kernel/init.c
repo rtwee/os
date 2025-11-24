@@ -7,6 +7,7 @@
 #include "../device/console.h"
 #include "../userprog/tss.h"
 #include "../userprog/syscall-init.h"
+#include "../device/keyboard.h"
 
 //负责所有模块的初始化
 void init_all()
@@ -15,7 +16,7 @@ void init_all()
     idt_init();
     mem_init();//内存初始化
     timer_init(); //开启定时器
-    
+    keyboard_init();
     thread_init();
     console_init();
     tss_init();
