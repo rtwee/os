@@ -137,6 +137,11 @@ Discarded input sections
                 0x00000000        0x4 build/stdio-kernel.o
  .note.GNU-stack
                 0x00000000        0x0 build/stdio-kernel.o
+ .group         0x00000000        0x8 build/ide.o
+ .text.__x86.get_pc_thunk.bx
+                0x00000000        0x4 build/ide.o
+ .note.GNU-stack
+                0x00000000        0x0 build/ide.o
 
 Memory Configuration
 
@@ -169,6 +174,7 @@ LOAD build/syscall-init.o
 LOAD build/syscall.o
 LOAD build/stdio.o
 LOAD build/stdio-kernel.o
+LOAD build/ide.o
                 [!provide]                        PROVIDE (__executable_start = SEGMENT_START ("text-segment", 0x8048000))
                 0x080480f4                        . = (SEGMENT_START ("text-segment", 0x8048000) + SIZEOF_HEADERS)
 
@@ -240,7 +246,7 @@ LOAD build/stdio-kernel.o
 .plt.sec
  *(.plt.sec)
 
-.text           0xc0001500     0x51e7
+.text           0xc0001500     0x5318
  *(.text.unlikely .text.*_unlikely .text.unlikely.*)
  *(.text.exit .text.exit.*)
  *(.text.startup .text.startup.*)
@@ -254,22 +260,21 @@ LOAD build/stdio-kernel.o
  .text.__x86.get_pc_thunk.bx
                 0xc0001651        0x4 build/main.o
                 0xc0001651                __x86.get_pc_thunk.bx
- .text          0xc0001655       0x52 build/init.o
+ .text          0xc0001655       0x57 build/init.o
                 0xc0001655                init_all
- .text          0xc00016a7      0x55b build/interrupt.o
-                0xc0001aa9                idt_init
-                0xc0001b15                intr_get_intr
-                0xc0001b3c                intr_enable
-                0xc0001b6f                intr_disable
-                0xc0001ba2                intr_get_status
-                0xc0001bb6                intr_set_intr
-                0xc0001bdb                register_handler
+ .text          0xc00016ac      0x55b build/interrupt.o
+                0xc0001aae                idt_init
+                0xc0001b1a                intr_get_intr
+                0xc0001b41                intr_enable
+                0xc0001b74                intr_disable
+                0xc0001ba7                intr_get_status
+                0xc0001bbb                intr_set_intr
+                0xc0001be0                register_handler
  .text.__x86.get_pc_thunk.ax
-                0xc0001c02        0x4 build/interrupt.o
-                0xc0001c02                __x86.get_pc_thunk.ax
- .text          0xc0001c06      0x1b5 build/timer.o
-                0xc0001d53                timer_init
- *fill*         0xc0001dbb        0x5 
+                0xc0001c07        0x4 build/interrupt.o
+                0xc0001c07                __x86.get_pc_thunk.ax
+ .text          0xc0001c0b      0x1b5 build/timer.o
+                0xc0001d58                timer_init
  .text          0xc0001dc0      0xe21 build/kernel.o
                 0xc0001dc0                intr_exit
                 0xc0001dce                syscall_handler
@@ -384,6 +389,8 @@ LOAD build/stdio-kernel.o
                 0xc0006614                printf
  .text          0xc000667d       0x6a build/stdio-kernel.o
                 0xc000667d                printk
+ .text          0xc00066e7      0x131 build/ide.o
+                0xc00066e7                ide_init
  *(.gnu.warning)
 
 .fini
@@ -394,7 +401,7 @@ LOAD build/stdio-kernel.o
                 0xc0007000                        . = ALIGN (CONSTANT (MAXPAGESIZE))
                 0xc0007000                        . = SEGMENT_START ("rodata-segment", (ALIGN (CONSTANT (MAXPAGESIZE)) + (. & (CONSTANT (MAXPAGESIZE) - 0x1))))
 
-.rodata         0xc0007000      0xf77
+.rodata         0xc0007000      0xfc1
  *(.rodata .rodata.* .gnu.linkonce.r.*)
  .rodata        0xc0007000       0x3c build/main.o
  .rodata        0xc000703c        0xa build/init.o
@@ -418,6 +425,8 @@ LOAD build/stdio-kernel.o
  *fill*         0xc0007e77        0x1 
  .rodata        0xc0007e78       0xd8 build/process.o
  .rodata        0xc0007f50       0x27 build/syscall-init.o
+ *fill*         0xc0007f77        0x1 
+ .rodata        0xc0007f78       0x49 build/ide.o
 
 .rodata1
  *(.rodata1)
@@ -426,47 +435,49 @@ LOAD build/stdio-kernel.o
  *(.eh_frame_hdr)
  *(.eh_frame_entry .eh_frame_entry.*)
 
-.eh_frame       0xc0007f78     0x1108
+.eh_frame       0xc0007fc4     0x112c
  *(.eh_frame)
- .eh_frame      0xc0007f78       0x8c build/main.o
- .eh_frame      0xc0008004       0x24 build/init.o
+ .eh_frame      0xc0007fc4       0x8c build/main.o
+ .eh_frame      0xc0008050       0x24 build/init.o
                                  0x50 (size before relaxing)
- .eh_frame      0xc0008028      0x1c4 build/interrupt.o
+ .eh_frame      0xc0008074      0x1c4 build/interrupt.o
                                 0x1f0 (size before relaxing)
- .eh_frame      0xc00081ec       0x94 build/timer.o
+ .eh_frame      0xc0008238       0x94 build/timer.o
                                  0xd4 (size before relaxing)
- .eh_frame      0xc0008280       0x1c build/debug.o
+ .eh_frame      0xc00082cc       0x1c build/debug.o
                                  0x48 (size before relaxing)
- .eh_frame      0xc000829c      0x168 build/string.o
+ .eh_frame      0xc00082e8      0x168 build/string.o
                                 0x194 (size before relaxing)
- .eh_frame      0xc0008404      0x2dc build/memory.o
+ .eh_frame      0xc0008450      0x2dc build/memory.o
                                 0x31c (size before relaxing)
- .eh_frame      0xc00086e0       0x90 build/bitmap.o
+ .eh_frame      0xc000872c       0x90 build/bitmap.o
                                  0xbc (size before relaxing)
- .eh_frame      0xc0008770      0x1bc build/thread.o
+ .eh_frame      0xc00087bc      0x1bc build/thread.o
                                 0x1fc (size before relaxing)
- .eh_frame      0xc000892c      0x148 build/list.o
+ .eh_frame      0xc0008978      0x148 build/list.o
                                 0x188 (size before relaxing)
- .eh_frame      0xc0008a74       0xdc build/sync.o
+ .eh_frame      0xc0008ac0       0xdc build/sync.o
                                 0x11c (size before relaxing)
- .eh_frame      0xc0008b50       0xd8 build/console.o
+ .eh_frame      0xc0008b9c       0xd8 build/console.o
                                 0x118 (size before relaxing)
- .eh_frame      0xc0008c28       0x68 build/keyboard.o
+ .eh_frame      0xc0008c74       0x68 build/keyboard.o
                                  0xa8 (size before relaxing)
- .eh_frame      0xc0008c90      0x11c build/ioqueue.o
+ .eh_frame      0xc0008cdc      0x11c build/ioqueue.o
                                 0x15c (size before relaxing)
- .eh_frame      0xc0008dac       0x6c build/tss.o
+ .eh_frame      0xc0008df8       0x6c build/tss.o
                                  0xac (size before relaxing)
- .eh_frame      0xc0008e18       0xd8 build/process.o
+ .eh_frame      0xc0008e64       0xd8 build/process.o
                                 0x118 (size before relaxing)
- .eh_frame      0xc0008ef0       0x6c build/syscall-init.o
+ .eh_frame      0xc0008f3c       0x6c build/syscall-init.o
                                  0xac (size before relaxing)
- .eh_frame      0xc0008f5c       0x8c build/syscall.o
+ .eh_frame      0xc0008fa8       0x8c build/syscall.o
                                  0xb8 (size before relaxing)
- .eh_frame      0xc0008fe8       0x70 build/stdio.o
+ .eh_frame      0xc0009034       0x70 build/stdio.o
                                  0xb0 (size before relaxing)
- .eh_frame      0xc0009058       0x28 build/stdio-kernel.o
+ .eh_frame      0xc00090a4       0x28 build/stdio-kernel.o
                                  0x54 (size before relaxing)
+ .eh_frame      0xc00090cc       0x24 build/ide.o
+                                 0x50 (size before relaxing)
  *(.eh_frame.*)
 
 .sframe
@@ -589,6 +600,7 @@ LOAD build/stdio-kernel.o
  .data          0xc000b296        0x0 build/syscall.o
  .data          0xc000b296        0x0 build/stdio.o
  .data          0xc000b296        0x0 build/stdio-kernel.o
+ .data          0xc000b296        0x0 build/ide.o
 
 .data1
  *(.data1)
@@ -597,7 +609,7 @@ LOAD build/stdio-kernel.o
                 0xc000b298                        . = ALIGN (ALIGNOF (NEXT_SECTION))
                 0xc000b2a0                        __bss_start = .
 
-.bss            0xc000b2a0      0xb80
+.bss            0xc000b2a0     0x1860
  *(.dynbss)
  *(.bss .bss.* .gnu.linkonce.b.*)
  .bss           0xc000b2a0        0x0 build/main.o
@@ -636,14 +648,17 @@ LOAD build/stdio-kernel.o
  .bss           0xc000be20        0x0 build/syscall.o
  .bss           0xc000be20        0x0 build/stdio.o
  .bss           0xc000be20        0x0 build/stdio-kernel.o
+ .bss           0xc000be20      0xce0 build/ide.o
+                0xc000be20                channel_cnt
+                0xc000be40                channels
  *(COMMON)
-                0xc000be20                        . = ALIGN ((. != 0x0)?0x4:0x1)
-                0xc000be20                        . = ALIGN (0x4)
-                0xc000be20                        . = SEGMENT_START ("ldata-segment", .)
-                0xc000be20                        . = ALIGN (0x4)
-                0xc000be20                        _end = .
+                0xc000cb00                        . = ALIGN ((. != 0x0)?0x4:0x1)
+                0xc000cb00                        . = ALIGN (0x4)
+                0xc000cb00                        . = SEGMENT_START ("ldata-segment", .)
+                0xc000cb00                        . = ALIGN (0x4)
+                0xc000cb00                        _end = .
                 [!provide]                        PROVIDE (end = .)
-                0xc000be20                        . = DATA_SEGMENT_END (.)
+                0xc000cb00                        . = DATA_SEGMENT_END (.)
 
 .stab
  *(.stab)
@@ -686,6 +701,7 @@ LOAD build/stdio-kernel.o
  .comment       0x0000002b       0x2c build/syscall.o
  .comment       0x0000002b       0x2c build/stdio.o
  .comment       0x0000002b       0x2c build/stdio-kernel.o
+ .comment       0x0000002b       0x2c build/ide.o
 
 .gnu.build.attributes
  *(.gnu.build.attributes .gnu.build.attributes.*)
