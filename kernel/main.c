@@ -161,6 +161,7 @@
 #include "../device/console.h"
 #include "../device/ioqueue.h"
 #include "../device/keyboard.h"
+#include "../lib/kernel/stdio-kernel.h"
 
 void test_thread1(void* arg);
 void test_thread2(void* arg);
@@ -184,9 +185,10 @@ void test_thread1(void* arg)
         while(!ioq_empty(&ioqueue))
         {
 			
-			console_put_str((char*)arg);
-			char chr = ioq_getchar(&ioqueue);
-			console_put_char(chr);
+			// console_put_str((char*)arg);
+			// char chr = ioq_getchar(&ioqueue);
+			// console_put_char(chr);
+            printk("%s_%c ",arg,ioq_getchar(&ioqueue));
 		}
 
    		intr_set_intr(old_status);
@@ -200,10 +202,11 @@ void test_thread2(void* arg)
         enum intr_status old_status = intr_disable();
         while(!ioq_empty(&ioqueue))
         {
-   	    console_put_str((char*)arg);
-    	    char chr = ioq_getchar(&ioqueue);
-   	    console_put_char(chr);
-	}
+   	    // console_put_str((char*)arg);
+    	//     char chr = ioq_getchar(&ioqueue);
+   	    // console_put_char(chr);
+            printk("%s_%c ",arg,ioq_getchar(&ioqueue));
+	    }
    	intr_set_intr(old_status);
     }
 }
