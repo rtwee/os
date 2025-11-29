@@ -163,19 +163,29 @@
 #include "../device/keyboard.h"
 #include "../lib/kernel/stdio-kernel.h"
 #include "../device/timer.h"
-
+#include "../lib/stdio.h"
+#include "../device/ide.h"
 
 void test_thread1(void* arg);
 void test_thread2(void* arg);
+
+extern struct ide_channel channels[2];         //有两个硬盘通道
 
 int main(void) {
    put_str("I am kernel\n");
    init_all();
    thread_start("kernel_thread_a",31,test_thread1," A_");
-   mtime_sleep(1000);
    thread_start("kernel_thread_b",31,test_thread2," B_");
    intr_enable();
-   
+
+   char write_buf[2048]="zhe shi wo de di yi ge ce shi qing ni kan kan dui bu dui";
+   char read_buf[2048]={0};
+
+   ide_write(&channels[0].devices[1],100,write_buf,2);
+   ide_read(&channels[0].devices[1],100,read_buf,2);
+
+   printk("context : %s",read_buf);
+
    while(1);
    return 0;
 }

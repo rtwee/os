@@ -87,3 +87,13 @@ uint32_t printf(const char * format,...)
     va_end(args);
     return write(buf);
 }
+
+// 格式化输出format
+uint32_t sprintf(char * str,const char * format,...)
+{
+    va_list args;
+    va_start(args,format);
+    vsprintf(str,format,args);
+    va_end(args);
+    return strlen(str);
+}

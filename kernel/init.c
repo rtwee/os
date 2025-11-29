@@ -21,6 +21,7 @@ void init_all()
     thread_init();
     console_init();
     tss_init();
-    syscall_init();
     ide_init();
+    syscall_init();
+    
 }
