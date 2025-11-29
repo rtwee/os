@@ -10,6 +10,7 @@
 #include "sync.h"
 
 struct task_struct * idle_thread;   //idle线程
+
 struct task_struct * main_trhead;   //主线程的PCB
 struct list thread_ready_list;      //就绪队列
 struct list thread_all_list;        //所有任务队列
@@ -22,7 +23,15 @@ struct lock pid_lock;               //用于设置pid的锁
 extern void switch_to(struct task_struct * cur,struct task_struct * next);
 
 //系统空闲时运行的线程
-
+static void idle(void * arg)
+{
+    while(1)
+    {
+        thread_block(TASK_BLOCKED);
+        //处理器需要被唤醒，要先开中断再挂起
+        asm volatile("sti;hlt":::"memory");
+    }
+}
 
 //获取当前线程的pcb指针
 struct task_struct * running_thread()
@@ -155,7 +164,7 @@ void thread_init(void)
     lock_init(&pid_lock);
     make_main_thread();
     //创建idle线程 //没有任务进行的时候来执行idle
-    
+    idle_thread = thread_start("idle",10,idle,NULL);
     put_str("thread inin done\n");
 }
 

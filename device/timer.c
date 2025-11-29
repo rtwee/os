@@ -5,7 +5,7 @@
 #include "debug.h"
 #include "stdint.h"
 
-#define IRQ0_FREQUENCY      1000
+#define IRQ0_FREQUENCY      100
 #define INPUT_FREQUENCY     1193180
 #define COUNTER0_VALUE       INPUT_FREQUENCY / IRQ0_FREQUENCY
 #define COUNTER0_PORT       0x40
@@ -48,4 +48,24 @@ void timer_init()
     register_handler(0x20,intr_timer_hanldler);
     put_str("timer_init done\n");
 }
+
+
+// 以tick位单位的sleep
+static void ticks_to_sleep(uint32_t sleep_ticks)
+{
+    uint32_t start_tick = ticks;
+    while (ticks - start_tick < sleep_ticks)
+    {
+        thread_yield(); //让出处理器等会再来看是否满足条件了,也就是等待调度再判断
+    }    
+}
+
+// 以毫秒为单位的sleep
+void mtime_sleep(uint32_t m_seconds)
+{
+    uint32_t sleep_ticks = DIV_ROUND_UP(m_seconds,mil_seconds_per_intr);
+    ASSERT(sleep_ticks > 0);
+    ticks_to_sleep(sleep_ticks);
+}
+
 

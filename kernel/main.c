@@ -162,6 +162,8 @@
 #include "../device/ioqueue.h"
 #include "../device/keyboard.h"
 #include "../lib/kernel/stdio-kernel.h"
+#include "../device/timer.h"
+
 
 void test_thread1(void* arg);
 void test_thread2(void* arg);
@@ -170,6 +172,7 @@ int main(void) {
    put_str("I am kernel\n");
    init_all();
    thread_start("kernel_thread_a",31,test_thread1," A_");
+   mtime_sleep(1000);
    thread_start("kernel_thread_b",31,test_thread2," B_");
    intr_enable();
    
