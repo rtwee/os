@@ -317,7 +317,7 @@ static void partition_scan(struct disk * hd,uint32_t ext_lba)
     // 遍历分区表项
     while((part_idx++) < 4)
     {
-        if(p->fs_type == 0x5)   //若为扩展分区
+        if(p->fs_type == 0x5)   //若为扩展分区，总扩展或者 下一个扩展分区的标识都是0x5,这种不需要解析，要进一步读取它的EBR中的分区表）
         {
             if(ext_lba_base != 0)
             {
@@ -360,7 +360,7 @@ static void partition_scan(struct disk * hd,uint32_t ext_lba)
 // 打印分区信息
 static  bool partition_info(struct list_elem * pelem,int arg)
 {
-    struct partition * part = elem2entry(struct partition ,part_tag,pelem);
+    struct partition * part = elem2entry(struct partition,part_tag,pelem);
     printk(" %s start_lba:0x%x,sec_cnt:0x%x\n",part->name,part->start_lba,part->sec_cnt);
     //只是为了主调函数list_traversal遍历元素
     return false;
@@ -373,10 +373,10 @@ void intr_hd_handler(uint8_t irq_no)
     ASSERT(irq_no == 0x2e || irq_no == 0x2f); // 硬盘中断
     uint8_t ch_no = irq_no - 0x2e;            // channel号
     struct ide_channel * channel = &channels[ch_no];
-    if(channel->irq_no != irq_no)
-    {
-        printk("iqr: %d -- %d",channel->irq_no,irq_no);
-    }
+    // if(channel->irq_no != irq_no)
+    // {
+    //     printk("iqr: %d -- %d",channel->irq_no,irq_no);
+    // }
     ASSERT(channel->irq_no == irq_no);
 
     if(channel->expecting_intr)
