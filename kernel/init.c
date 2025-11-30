@@ -9,6 +9,7 @@
 #include "../userprog/syscall-init.h"
 #include "../device/keyboard.h"
 #include "../device/ide.h"
+#include "../fs/fs.h"
 
 //负责所有模块的初始化
 void init_all()
@@ -24,5 +25,5 @@ void init_all()
     
     syscall_init();
     ide_init();
-    
+    filesys_init();
 }

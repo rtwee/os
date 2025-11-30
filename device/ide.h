@@ -5,6 +5,7 @@
 #include "../lib/kernel/bitmap.h"
 #include "../thread/sync.h"
 
+
 struct disk;
 struct ide_channel;
 
@@ -45,8 +46,14 @@ struct ide_channel
     struct disk devices[2];     //通道上两个盘
 };
 
+extern uint8_t channel_cnt;
+extern struct ide_channel channels[2];
+extern struct list partition_list;
+
+
 void ide_init();
 void ide_read(struct disk * hd,uint32_t lba,void * buf,uint32_t sec_cnt);
 void ide_write(struct disk * hd,uint32_t lba,void * buf,uint32_t sec_cnt);
+
 
 #endif
